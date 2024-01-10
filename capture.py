@@ -21,9 +21,13 @@ if not cap.isOpened():
 # Wait for the camera to initialize and adjust light levels
 time.sleep(2)
 
-while True:
-    ret, frame = cap.read()
-    if ret:
+try:
+    while True:
+        ret, frame = cap.read()
+        if not ret:
+            print("Failed to capture image")
+            break
+
         # Convert the frame to a PIL image
         pil_img = Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
 
@@ -40,12 +44,16 @@ while True:
         print("📸 Say cheese! Saving frame.")
         path = f"{folder}/frame.jpg"
         cv2.imwrite(path, frame)
-    else:
-        print("Failed to capture image")
 
-    # Wait for 2 seconds
-    time.sleep(2)
+        # Display the captured frame (optional)
+        cv2.imshow("Captured Frame", frame)
+        cv2.waitKey(1)  # Adjust the waitKey duration if needed
 
-# Release the camera and close all windows
-cap.release()
-cv2.destroyAllWindows()
+        # Wait for 2 seconds
+        time.sleep(2)
+
+except KeyboardInterrupt:
+    # Release the camera and close all windows when Ctrl+C is pressed
+    cap.release()
+    cv2.destroyAllWindows()
+    print("Camera released and windows closed.")

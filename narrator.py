@@ -1,15 +1,18 @@
 import os
-from openai import OpenAI
-import base64
-import json
 import time
+import base64
 import simpleaudio as sa
 import errno
-from elevenlabs import generate, play, set_api_key, voices
+import openai
+from elevenlabs import generate, voices, play, set_api_key
 
-client = OpenAI()
+OPENAI_API_KEY = "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"
+ELEVENLABS_API_KEY = "9b74ed5063c874b6b22a1dbb12803140"
+ELEVENLABS_VOICE_ID = "tuFYG9DxDz318m9BLte9"
 
-set_api_key(os.environ.get("ELEVENLABS_API_KEY"))
+# Set API keys for both OpenAI and Eleven Labs
+openai.api_key = OPENAI_API_KEY
+set_api_key(ELEVENLABS_API_KEY)
 
 def encode_image(image_path):
     while True:
@@ -23,9 +26,9 @@ def encode_image(image_path):
             # File is being written to, wait a bit and retry
             time.sleep(0.1)
 
-
 def play_audio(text):
-    audio = generate(text, voice=os.environ.get("ELEVENLABS_VOICE_ID"))
+    # Generate audio with the specified voice ID
+    audio = generate(text, voice=ELEVENLABS_VOICE_ID)
 
     unique_id = base64.urlsafe_b64encode(os.urandom(30)).decode("utf-8").rstrip("=")
     dir_path = os.path.join("narration", unique_id)
@@ -52,9 +55,8 @@ def generate_new_line(base64_image):
         },
     ]
 
-
 def analyze_image(base64_image, script):
-    response = client.chat.completions.create(
+    response = openai.ChatCompletion.create(
         model="gpt-4-vision-preview",
         messages=[
             {
@@ -69,9 +71,9 @@ def analyze_image(base64_image, script):
         + generate_new_line(base64_image),
         max_tokens=500,
     )
+
     response_text = response.choices[0].message.content
     return response_text
-
 
 def main():
     script = []
@@ -96,7 +98,6 @@ def main():
 
         # wait for 5 seconds
         time.sleep(5)
-
 
 if __name__ == "__main__":
     main()
