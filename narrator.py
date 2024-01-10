@@ -6,9 +6,9 @@ import errno
 import openai
 from elevenlabs import generate, voices, play, set_api_key
 
-OPENAI_API_KEY = "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"
-ELEVENLABS_API_KEY = "9b74ed5063c874b6b22a1dbb12803140"
-ELEVENLABS_VOICE_ID = "tuFYG9DxDz318m9BLte9"
+OPENAI_API_KEY = "sk-"
+ELEVENLABS_API_KEY = ""
+ELEVENLABS_VOICE_ID = ""
 
 # Set API keys for both OpenAI and Eleven Labs
 openai.api_key = OPENAI_API_KEY
@@ -63,7 +63,7 @@ def analyze_image(base64_image, script):
                 "role": "system",
                 "content": """
                 You are Sir David Attenborough. Narrate the picture of the human as if it is a nature documentary.
-                Make it snarky and funny. Don't repeat yourself. Make it short. If I do anything remotely interesting, make a big deal about it!
+                Make it snarky and funny. This person's name is A.V.M. Don't repeat yourself. Make it short. If I do anything remotely interesting, make a big deal about it!
                 """,
             },
         ]
@@ -86,10 +86,10 @@ def main():
         base64_image = encode_image(image_path)
 
         # analyze posture
-        print("👀 David is watching...")
+        print("👀 The homies are watching...")
         analysis = analyze_image(base64_image, script=script)
 
-        print("🎙️ David says:")
+        print("🎙️ The homies say:")
         print(analysis)
 
         play_audio(analysis)
